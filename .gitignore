@@ -1,0 +1,4 @@
+/node_modules
+/lib
+/.ts_incremental_build_info.json
+/coverage

@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "target": "ES2019",
+        "module": "commonjs",
+        "declaration": true,
+        "outDir": "./lib",
+        "incremental": true,
+        "tsBuildInfoFile": "./.ts_incremental_build_info.json",
+        "removeComments": true,
+        "strict": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    },
+    "typedocOptions": {
+        "mode": "modules",
+        "out": "docs",
+        "excludeNotExported": true,
+        "name": "safe-auth",
+        "readme": "https://github.com/evenset/safe-auth#readme",
+        "toc": true,
+        "exclude": "**/*.test.ts"
+    },
+    "include": ["src/**/*"]
+}
