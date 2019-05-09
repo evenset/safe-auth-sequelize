@@ -1,5 +1,5 @@
-import {Sequelize} from 'sequelize';
-import {Model, DataTypes} from 'sequelize';
+import crypto from 'crypto';
+import {Sequelize, Model, DataTypes} from 'sequelize';
 import {User, AccessToken} from 'safe-auth';
 
 type Interface<T = {}> = Function & { prototype: T };
@@ -28,14 +28,20 @@ export interface ReturnType {
 export default function(sequelize: Sequelize): ReturnType {
     function Stored<T, TBase extends Interface>(
         Base: TBase,
-    ): TBase & StoredModelConstructor & typeof Model {
+        constructor?: (...args: any[]) => void
+    ): TBase & typeof Model {
         type Instance = {
             new(...args: any[]): Class;
-            items: {[key: number]: Class};
             idCounter: number;
         } & Class
 
         class Class extends Model {
+            public constructor(...args: any[]) {
+                if (constructor)
+                    constructor(...args);
+                super(...args);
+            }
+
             public static async first(args: any): Promise<Class|null> {
                 return await this.findOne({where: args});
             }
@@ -72,12 +78,8 @@ export default function(sequelize: Sequelize): ReturnType {
                 'name',
             ) as PropertyDescriptor).value,
         });
-        return Class as unknown as (
-            TBase &
-            {items: {[key: number]: T}} &
-            StoredModelConstructor &
-            typeof Model
-        );
+
+        return Class as unknown as (TBase & typeof Model);
     }
 
     const SequelizeUser = Stored<User, typeof User>(User);
@@ -104,8 +106,49 @@ export default function(sequelize: Sequelize): ReturnType {
         },
     }, {sequelize});
 
+    // class SequelizeAccessToken extends
+    //     (Stored<AccessToken, typeof AccessToken>(AccessToken) as typeof Model) {
+    //     public id!: number;
+    //     public token!: string;
+    //     public refreshToken!: string;
+    //     public readonly expires!: Date;
+    //     public user!: User;
+    //     public consumed!: boolean;
+    //     public readonly createdAt!: Date;
+    //     public readonly updatedAt!: Date;
+    //
+    //     public constructor(...args: any[]) {
+    //         if (!args[0].token)
+    //             args[0].token = crypto
+    //                 .randomBytes(22)
+    //                 .toString('base64')
+    //                 .replace(/=*$/g, '');
+    //         if (!args[0].refreshToken)
+    //             args[0].refreshToken = crypto
+    //                 .randomBytes(22)
+    //                 .toString('base64')
+    //                 .replace(/=*$/g, '');
+    //         if (!args[0].userId && args[0].user)
+    //             args[0].userId = args[0].user.id;
+    //         super(...args);
+    //     }
+    // }
     const SequelizeAccessToken = Stored<AccessToken, typeof AccessToken>(
         AccessToken,
+        (...args: any[]): void => {
+            if (!args[0].token)
+                args[0].token = crypto
+                    .randomBytes(22)
+                    .toString('base64')
+                    .replace(/=*$/g, '');
+            if (!args[0].refreshToken)
+                args[0].refreshToken = crypto
+                    .randomBytes(22)
+                    .toString('base64')
+                    .replace(/=*$/g, '');
+            if (!args[0].userId && args[0].user)
+                args[0].userId = args[0].user.id;
+        },
     );
     SequelizeAccessToken.init({
         id: {
@@ -132,6 +175,11 @@ export default function(sequelize: Sequelize): ReturnType {
             allowNull: false,
         },
     }, {sequelize});
+    SequelizeAccessToken.belongsTo(SequelizeUser, {
+        as: 'user',
+        foreignKey: 'userId',
+        targetKey: 'id',
+    });
 
     return {SequelizeUser, SequelizeAccessToken};
 }

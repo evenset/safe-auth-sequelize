@@ -5,7 +5,11 @@
     "main": "src/index.ts",
     "dependencies": {
         "pg": "^7.10.0",
+        "safe-auth": "^0.1.1",
         "sequelize": "^5.8.5"
+    },
+    "peerDependencies": {
+        "safe-auth": "^0.1.1"
     },
     "devDependencies": {
         "@types/bluebird": "^3.5.26",
