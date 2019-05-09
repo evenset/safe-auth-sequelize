@@ -28,7 +28,8 @@ export interface ReturnType {
 export default function(sequelize: Sequelize): ReturnType {
     function Stored<T, TBase extends Interface>(
         Base: TBase,
-        constructor?: (...args: any[]) => void
+        constructor?: (...args: any[]) => void,
+        includes: any[] = [],
     ): TBase & typeof Model {
         type Instance = {
             new(...args: any[]): Class;
@@ -42,8 +43,12 @@ export default function(sequelize: Sequelize): ReturnType {
                 super(...args);
             }
 
-            public static async first(args: any): Promise<Class|null> {
-                return await this.findOne({where: args});
+            public static async first(filters: any): Promise<Class|null> {
+                return await this.findOne({where: filters, include: includes});
+            }
+
+            public static async filter(filters: any): Promise<Class[]> {
+                return await this.findAll({where: filters, include: includes});
             }
         }
 
@@ -122,6 +127,13 @@ export default function(sequelize: Sequelize): ReturnType {
             if (!args[0].userId && args[0].user)
                 args[0].userId = args[0].user.id;
         },
+        [
+            {
+                model: SequelizeUser,
+                foreignKey: 'userId',
+                as: 'user',
+            },
+        ]
     );
     SequelizeAccessToken.init({
         id: {

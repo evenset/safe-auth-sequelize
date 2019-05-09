@@ -51,12 +51,12 @@ describe('Normal flow', (): void => {
             .and.is.equal(user.id);
 
         const accessToken = await SequelizeAccessToken.issue(user);
-        // const fetchedUser = await SequelizeAccessToken
-        //     .authenticate(accessToken.token);
-        // expect(fetchedUser)
-        //     .to.be.instanceOf(SequelizeUser)
-        //     .and.to.have.property('id')
-        //     .that.is.a('number')
-        //     .and.is.equal(user.id);
+        const fetchedUser = await SequelizeAccessToken
+            .authenticate(accessToken.token);
+        expect(fetchedUser)
+            .to.be.instanceOf(SequelizeUser)
+            .and.to.have.property('id')
+            .that.is.a('number')
+            .and.is.equal(user.id);
     });
 });
