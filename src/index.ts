@@ -106,33 +106,6 @@ export default function(sequelize: Sequelize): ReturnType {
         },
     }, {sequelize});
 
-    // class SequelizeAccessToken extends
-    //     (Stored<AccessToken, typeof AccessToken>(AccessToken) as typeof Model) {
-    //     public id!: number;
-    //     public token!: string;
-    //     public refreshToken!: string;
-    //     public readonly expires!: Date;
-    //     public user!: User;
-    //     public consumed!: boolean;
-    //     public readonly createdAt!: Date;
-    //     public readonly updatedAt!: Date;
-    //
-    //     public constructor(...args: any[]) {
-    //         if (!args[0].token)
-    //             args[0].token = crypto
-    //                 .randomBytes(22)
-    //                 .toString('base64')
-    //                 .replace(/=*$/g, '');
-    //         if (!args[0].refreshToken)
-    //             args[0].refreshToken = crypto
-    //                 .randomBytes(22)
-    //                 .toString('base64')
-    //                 .replace(/=*$/g, '');
-    //         if (!args[0].userId && args[0].user)
-    //             args[0].userId = args[0].user.id;
-    //         super(...args);
-    //     }
-    // }
     const SequelizeAccessToken = Stored<AccessToken, typeof AccessToken>(
         AccessToken,
         (...args: any[]): void => {
