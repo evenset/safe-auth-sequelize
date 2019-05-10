@@ -25,6 +25,7 @@ export interface ReturnType {
         typeof Model;
 }
 
+// TODO: other configurations should be done
 export default function(sequelize: Sequelize): ReturnType {
     function Stored<T, TBase extends Interface>(
         Base: TBase,
