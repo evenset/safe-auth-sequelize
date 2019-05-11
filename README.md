@@ -26,13 +26,13 @@ SequelizeUser.associate();
 SequelizeAccessToken.associate();
 ```
 
-_Note that this is the same for all other sequelize models, safe-auth-sequelize
+Note that this is the same for all other sequelize models, safe-auth-sequelize
 can't do it by itself because the initialization process needs an instance of
 Sequelize.
 
 If you are using the general sequelize importing script for your project and it
 runs after initalizing these models, you don't need to call `associate` as that
-script does it for you._
+script does it for you.
 
 ## Extending models
 
