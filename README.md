@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/evenset/safe-auth-sequelize.svg?branch=development)](https://travis-ci.org/evenset/safe-auth-sequelize)
+[![Build Status](https://travis-ci.com/evenset/safe-auth-sequelize.svg?branch=development)](https://travis-ci.com/evenset/safe-auth-sequelize)
 [![codecov](https://codecov.io/gh/evenset/safe-auth-sequelize/branch/development/graph/badge.svg)](https://codecov.io/gh/evenset/safe-auth-sequelize)
 [![npm version](https://badge.fury.io/js/safe-auth-sequelize.svg)](https://badge.fury.io/js/safe-auth-sequelize)
 
