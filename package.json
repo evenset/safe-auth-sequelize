@@ -2,14 +2,13 @@
     "name": "safe-auth-sequelize",
     "version": "0.1.0",
     "description": "Sequelize storage backend for safe-auth.",
-    "main": "src/index.ts",
+    "main": "lib/index.js",
     "dependencies": {
         "pg": "^7.10.0",
-        "safe-auth": "^0.1.1",
         "sequelize": "^5.8.5"
     },
     "peerDependencies": {
-        "safe-auth": "^0.1.1"
+        "safe-auth": "^0.2.1"
     },
     "devDependencies": {
         "@types/bluebird": "^3.5.26",
@@ -28,6 +27,7 @@
         "faker": "^4.1.0",
         "jest": "^24.8.0",
         "jest-each": "^24.8.0",
+        "safe-auth": "^0.2.1",
         "sequelize-cli": "^5.4.0",
         "sinon": "^7.3.2",
         "sinon-chai": "^3.3.0",
@@ -42,7 +42,7 @@
         "tsc:watch": "tsc --watch",
         "test:runner": "export NODE_ENV=test; ",
         "test": "npm run test:runner -- jest --verbose --testRegex .*\\.test\\.ts$ --coverage",
-        "test:watch": "npm run test:runner -- jest --verbose --testRegex .*\\.test\\.ts$ --coverage --watch",
+        "test:watch": "npm run test:runner -- jest --verbose --testRegex .*\\.test\\.ts$ --watch",
         "lint": "eslint --ext ts ./src",
         "audit-ci": "audit-ci",
         "typedoc": "typedoc"
@@ -63,5 +63,8 @@
     "bugs": {
         "url": "https://github.com/evenset/safe-auth-sequelize/issues"
     },
-    "homepage": "https://github.com/evenset/safe-auth-sequelize#readme"
+    "homepage": "https://github.com/evenset/safe-auth-sequelize#readme",
+    "files": [
+        "lib"
+    ]
 }

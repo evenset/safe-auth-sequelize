@@ -12,7 +12,7 @@ cache:
 services: postgresql
 
 before_script:
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npm install audit-ci && npm run audit-ci --moderate; fi
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then npm install audit-ci && npm run audit-ci --moderate && npm outdated; fi
   - npm install eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser codecov
 script:
   - npm run lint

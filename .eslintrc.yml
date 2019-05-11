@@ -28,7 +28,8 @@ rules:
   array-bracket-spacing: ['error', 'never']
   comma-spacing: ['error', {'before': false, 'after': true}]
   arrow-spacing: 'error'
-  space-in-parens: ['error']
+  space-in-parens: 'error'
+  constructor-super: 'off'
   '@typescript-eslint/no-unused-vars': ['error', {'args': 'none'}]
-  '@typescript-eslint/no-explicit-any': 0
-  '@typescript-eslint/no-non-null-assertion': 0
+  '@typescript-eslint/no-explicit-any': 'off'
+  '@typescript-eslint/no-non-null-assertion': 'off'

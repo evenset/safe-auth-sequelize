@@ -5,12 +5,13 @@ import {Sequelize} from 'sequelize';
 import Umzug from 'umzug';
 import {exec} from 'child_process';
 
-import generateModels, {ReturnType} from '..';
+export interface ReturnType {
+    sequelize: Sequelize;
+}
 
 export default (): ReturnType => {
-    const context: ReturnType = {} as unknown as ReturnType;
+    const context: ReturnType = {sequelize: undefined as unknown as Sequelize};
     let database: string;
-    let sequelize: Sequelize;
     const timezone = process.env.TZ || 'UTC';
     process.env.TZ = timezone;
 
@@ -39,22 +40,18 @@ export default (): ReturnType => {
             'node_modules/.bin/sequelize db:create',
             {env: {...process.env, POSTGRES_DATABASE: database}},
         );
-        sequelize = new Sequelize(
+        context.sequelize = new Sequelize(
             database,
             config.username,
             config.password,
             config,
         );
-        const models = generateModels(sequelize);
-        context.SequelizeUser = models.SequelizeUser;
-        context.SequelizeAccessToken = models.SequelizeAccessToken;
-
         const umzug = new Umzug({
             storage: 'sequelize',
-            storageOptions: {sequelize},
+            storageOptions: {sequelize: context.sequelize},
             migrations: {
                 params: [
-                    sequelize.getQueryInterface(),
+                    context.sequelize.getQueryInterface(),
                     Sequelize,
                 ],
                 path: path.join(__dirname, '../migrations'),
@@ -65,7 +62,7 @@ export default (): ReturnType => {
     });
 
     afterEach(async (): Promise<void> => {
-        await sequelize.close();
+        await context.sequelize!.close();
         await promisify(exec)(
             'node_modules/.bin/sequelize db:drop',
             {env: {...process.env, POSTGRES_DATABASE: database}},
