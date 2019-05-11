@@ -1,170 +1,257 @@
 import crypto from 'crypto';
-import {Sequelize, Model, DataTypes} from 'sequelize';
+import {
+    DataTypes,
+    InitOptions,
+    Model,
+    ModelAttributes,
+} from 'sequelize';
 import {User, AccessToken} from 'safe-auth';
+
+class ImplementedAccessToken extends AccessToken {
+    public id = 1;
+    public token = '';
+    public refreshToken = '';
+    public expires: Date|null = null;
+    public user: User = (null as unknown as User);
+    protected consumed = false;
+    public createdAt = new Date();
+    public updatedAt = new Date();
+
+    public remove(): Promise<void> {
+        return new Promise((): void => {});
+    }
+
+    public save(): Promise<void> {
+        return new Promise((): void => {});
+    }
+}
+
+class ImplementedUser extends User {
+    public id = 1;
+    public username = '';
+    public password = '';
+    public isActive = true;
+    public createdAt = new Date();
+    public updatedAt = new Date();
+
+    public save(): Promise<void> {
+        return new Promise((resolve): void => resolve());
+    }
+
+    public remove(): Promise<void> {
+        return new Promise((resolve): void => resolve());
+    }
+
+    public async getAccessToken(token: string): Promise<AccessToken|null> {
+        return new Promise((): void => {});
+    }
+
+    public async getAccessTokens(): Promise<AccessToken[]> {
+        return new Promise((): void => {});
+    }
+
+    public async getActiveAccessTokens(): Promise<AccessToken[]> {
+        return new Promise((): void => {});
+    }
+}
 
 type Interface<T = {}> = Function & { prototype: T };
 
-interface Constructor<T = {}> {
-    new(...args: any[]): T;
-    prototype: T;
-}
+function Stored<T, TBase extends Interface>(
+    Base: TBase,
+    defaultAttributes: ModelAttributes,
+): TBase & typeof Model {
+    type Instance = {
+        new(...args: any[]): Class;
+    } & Class
 
-interface StoredModelConstructor<T = {
-    remove(): Promise<void>;
-    save(): Promise<void>;
-    id: number|undefined;
-    createdAt: Date;
-    updatedAt: Date;
-}> {
-    new(...args: any[]): T;
-}
+    class Class extends Model {
+        protected static includes = [];
 
-export interface ReturnType {
-    SequelizeUser: typeof User & StoredModelConstructor & typeof Model;
-    SequelizeAccessToken: typeof AccessToken & StoredModelConstructor &
-        typeof Model;
-}
-
-export default function(sequelize: Sequelize): ReturnType {
-    function Stored<T, TBase extends Interface>(
-        Base: TBase,
-        constructor?: (...args: any[]) => void,
-        includes: any[] = [],
-    ): TBase & typeof Model {
-        type Instance = {
-            new(...args: any[]): Class;
-            idCounter: number;
-        } & Class
-
-        class Class extends Model {
-            public constructor(...args: any[]) {
-                if (constructor)
-                    constructor(...args);
-                super(...args);
-            }
-
-            public static async first(filters: any): Promise<Class|null> {
-                return await this.findOne({where: filters, include: includes});
-            }
-
-            public static async filter(filters: any): Promise<Class[]> {
-                return await this.findAll({where: filters, include: includes});
-            }
+        public static async first(filters: any): Promise<Class|null> {
+            return await this.findOne({
+                where: filters,
+                include: this.includes,
+            });
         }
 
-        Object.getOwnPropertyNames(Base.prototype).forEach((name): void => {
-            if (Class.prototype.hasOwnProperty(name))
-                return;
-            Object.defineProperty(
-                Class.prototype,
-                name,
-                Object.getOwnPropertyDescriptor(
-                    Base.prototype,
-                    name,
-                ) as PropertyDescriptor,
-            );
-        });
-        Object.getOwnPropertyNames(Base).forEach((name): void => {
-            if (Class.hasOwnProperty(name))
-                return;
-            Object.defineProperty(
-                Class,
-                name,
-                Object.getOwnPropertyDescriptor(
-                    Base,
-                    name,
-                ) as PropertyDescriptor,
-            );
-        });
+        public static async filter(filters: any): Promise<Class[]> {
+            return await this.findAll({
+                where: filters,
+                include: this.includes,
+            });
+        }
 
-        Object.defineProperty(Class, 'name', {
-            value: (Object.getOwnPropertyDescriptor(
-                Base,
-                'name',
-            ) as PropertyDescriptor).value,
-        });
-
-        return Class as unknown as (TBase & typeof Model);
+        public static init(
+            attributes: ModelAttributes,
+            options: InitOptions,
+        ): void {
+            super.init(
+                {...defaultAttributes, ...attributes},
+                options,
+            );
+        }
     }
 
-    const SequelizeUser = Stored<User, typeof User>(User);
-
-    SequelizeUser.init({
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
-            allowNull: false,
-        },
-        username: {
-            type: new DataTypes.STRING(128),
-            allowNull: false,
-        },
-        password: {
-            type: new DataTypes.STRING(128),
-            allowNull: false,
-        },
-        isActive: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-            allowNull: false,
-        },
-    }, {sequelize});
-
-    const SequelizeAccessToken = Stored<AccessToken, typeof AccessToken>(
-        AccessToken,
-        (...args: any[]): void => {
-            if (!args[0].token)
-                args[0].token = crypto
-                    .randomBytes(22)
-                    .toString('base64')
-                    .replace(/=*$/g, '');
-            if (!args[0].refreshToken)
-                args[0].refreshToken = crypto
-                    .randomBytes(22)
-                    .toString('base64')
-                    .replace(/=*$/g, '');
-            if (!args[0].userId && args[0].user)
-                args[0].userId = args[0].user.id;
-        },
-        [
-            {
-                model: SequelizeUser,
-                foreignKey: 'userId',
-                as: 'user',
-            },
-        ]
-    );
-    SequelizeAccessToken.init({
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
-            allowNull: false,
-        },
-        token: {
-            type: new DataTypes.STRING(128),
-            allowNull: false,
-        },
-        refreshToken: {
-            type: new DataTypes.STRING(128),
-            allowNull: false,
-        },
-        expires: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-        consumed: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
-            allowNull: false,
-        },
-    }, {sequelize});
-    SequelizeAccessToken.belongsTo(SequelizeUser, {
-        as: 'user',
-        foreignKey: 'userId',
-        targetKey: 'id',
+    Object.getOwnPropertyNames(Base.prototype).forEach((name): void => {
+        if (Class.prototype.hasOwnProperty(name))
+            return;
+        Object.defineProperty(
+            Class.prototype,
+            name,
+            Object.getOwnPropertyDescriptor(
+                Base.prototype,
+                name,
+            ) as PropertyDescriptor,
+        );
+    });
+    Object.getOwnPropertyNames(Base).forEach((name): void => {
+        if (Class.hasOwnProperty(name))
+            return;
+        Object.defineProperty(
+            Class,
+            name,
+            Object.getOwnPropertyDescriptor(
+                Base,
+                name,
+            ) as PropertyDescriptor,
+        );
     });
 
-    return {SequelizeUser, SequelizeAccessToken};
+    Object.defineProperty(Class, 'name', {
+        value: 'Sequelized' + (Object.getOwnPropertyDescriptor(
+            Base,
+            'name',
+        ) as PropertyDescriptor).value,
+    });
+
+    return Class as unknown as (TBase & typeof Model);
 }
+
+export class SequelizeUser extends
+    (Stored<User, typeof User>(
+        User,
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true,
+                allowNull: false,
+            },
+            username: {
+                type: new DataTypes.STRING(128),
+                allowNull: false,
+            },
+            password: {
+                type: new DataTypes.STRING(128),
+                allowNull: false,
+            },
+            isActive: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+                allowNull: false,
+            },
+        },
+    ) as (typeof Model & typeof ImplementedUser)) {
+
+    public id!: number;
+    public username!: string;
+    public password!: string;
+    public isActive!: boolean;
+
+    /**
+     * Takes a string token and returns the AccessToken instance with that
+     * token that belongs to the User instance (has its user foreign key set to
+     * the User instance).
+     */
+    public async getAccessToken(token: string): Promise<AccessToken|null> {
+        return await AccessToken.first({token, userId: this.id});
+    }
+
+    /**
+     * Returns all AccessToken instances that belong to this User (have their
+     * user foreign key set to the User instance).
+     */
+    public async getAccessTokens(): Promise<AccessToken[]> {
+        return await AccessToken.filter({userId: this.id});
+    }
+
+    /**
+     * Returns all AccessToken instances that belong to this User (have their
+     * user foreign key set to the User instance) and are not expired yet.
+     */
+    public async getActiveAccessTokens(): Promise<AccessToken[]> {
+        return await AccessToken.filter({userId: this.id, active: true});
+    }
+}
+Object.defineProperty(SequelizeUser, 'name', {value: 'User'});
+
+export class SequelizeAccessToken extends
+    (Stored<AccessToken, typeof AccessToken>(
+        AccessToken,
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true,
+                allowNull: false,
+            },
+            token: {
+                type: new DataTypes.STRING(128),
+                allowNull: false,
+            },
+            refreshToken: {
+                type: new DataTypes.STRING(128),
+                allowNull: false,
+            },
+            expires: {
+                type: DataTypes.DATE,
+                allowNull: true,
+            },
+            consumed: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+                allowNull: false,
+            },
+        },
+    ) as (typeof Model & typeof ImplementedAccessToken)) {
+    protected static includes = [
+        {model: SequelizeUser, foreignKey: 'userId', as: 'user'},
+    ];
+    public id!: number;
+    public token!: string;
+    public refreshToken!: string;
+    public expires!: Date;
+    public user!: SequelizeUser;
+    public consumed!: boolean;
+
+    public constructor(...args: any[]) {
+        if (!args[0].token)
+            args[0].token = crypto
+                .randomBytes(22)
+                .toString('base64')
+                .replace(/=*$/g, '');
+        if (!args[0].refreshToken)
+            args[0].refreshToken = crypto
+                .randomBytes(22)
+                .toString('base64')
+                .replace(/=*$/g, '');
+        if (!args[0].userId && args[0].user)
+            args[0].userId = args[0].user.id;
+        super(...args);
+    }
+
+    public static associate(): void {
+        SequelizeAccessToken.belongsTo(SequelizeUser, {
+            as: 'user',
+            foreignKey: 'userId',
+            targetKey: 'id',
+        });
+    }
+
+    public static async issue(user: User): Promise<AccessToken> {
+        const accessToken = await super.issue(user);
+        return (await this.first({token: accessToken.token}))!;
+    }
+}
+Object.defineProperty(SequelizeAccessToken, 'name', {value: 'AccessToken'});
