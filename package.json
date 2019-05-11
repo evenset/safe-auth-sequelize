@@ -4,11 +4,10 @@
     "description": "Sequelize storage backend for safe-auth.",
     "main": "lib/index.js",
     "dependencies": {
-        "pg": "^7.10.0",
-        "sequelize": "^5.8.5"
+        "safe-auth": "0.2.x"
     },
     "peerDependencies": {
-        "safe-auth": "^0.2.1"
+        "sequelize": "5.x.x"
     },
     "devDependencies": {
         "@types/bluebird": "^3.5.26",
@@ -16,18 +15,24 @@
         "@types/chai-as-promised": "^7.1.0",
         "@types/faker": "^4.1.5",
         "@types/jest": "^24.0.12",
-        "@types/node": "^11.13.8",
+        "@types/node": "^12.0.0",
         "@types/sinon": "^7.0.11",
         "@types/sinon-chai": "^3.2.2",
         "@types/umzug": "^2.2.1",
         "@types/uuid": "^3.4.4",
         "@types/validator": "^10.11.0",
+        "@typescript-eslint/eslint-plugin": "^1.8.0",
+        "@typescript-eslint/parser": "^1.8.0",
+        "audit-ci": "^1.7.0",
         "chai": "^4.2.0",
         "chai-as-promised": "^7.1.1",
+        "codecov": "^3.4.0",
+        "eslint": "^5.16.0",
         "faker": "^4.1.0",
         "jest": "^24.8.0",
         "jest-each": "^24.8.0",
-        "safe-auth": "^0.2.1",
+        "pg": "^7.11.0",
+        "sequelize": "^5.8.5",
         "sequelize-cli": "^5.4.0",
         "sinon": "^7.3.2",
         "sinon-chai": "^3.3.0",

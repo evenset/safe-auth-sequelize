@@ -93,11 +93,11 @@ describe('Inheriting and extending user model', (): void => {
         }
         User.init({
             firstname: {
-                type: new DataTypes.STRING(128),
+                type: DataTypes.STRING,
                 allowNull: false,
             },
             lastname: {
-                type: new DataTypes.STRING(128),
+                type: DataTypes.STRING,
                 allowNull: false,
             },
         }, {sequelize});
@@ -137,11 +137,11 @@ describe('Inheriting and extending user model', (): void => {
         }
         User.init({
             firstname: {
-                type: new DataTypes.STRING(128),
+                type: DataTypes.STRING,
                 allowNull: false,
             },
             lastname: {
-                type: new DataTypes.STRING(128),
+                type: DataTypes.STRING,
                 allowNull: false,
             },
         }, {sequelize});
@@ -170,7 +170,7 @@ describe('Inheriting and extending user model', (): void => {
         }
         AccessToken.init({
             randomField: {
-                type: new DataTypes.INTEGER,
+                type: DataTypes.INTEGER,
                 allowNull: true,
             },
         }, {sequelize});
