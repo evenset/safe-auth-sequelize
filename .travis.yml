@@ -15,8 +15,6 @@ matrix:
     - env: SEQUELIZE_VERSION=5.3
     - env: SEQUELIZE_VERSION=5.4
     - env: SEQUELIZE_VERSION=5.5
-    - env: SEQUELIZE_VERSION=5.6
-    - env: SEQUELIZE_VERSION=5.7
 
 cache:
   directories:
