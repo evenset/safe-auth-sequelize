@@ -183,6 +183,15 @@ export class SequelizeUser extends
     public async getActiveAccessTokens(): Promise<AccessToken[]> {
         return await AccessToken.filter({userId: this.id, active: true});
     }
+
+    /**
+     * Generates associations for SequelizeAccesToken
+     */
+    public static associate(models: {
+        User?: typeof SequelizeUser;
+        AccessToken?: typeof SequelizeAccessToken;
+    }): void {
+    }
 }
 Object.defineProperty(SequelizeUser, 'name', {value: 'User'});
 
@@ -241,14 +250,24 @@ export class SequelizeAccessToken extends
         super(...args);
     }
 
-    public static associate(): void {
-        SequelizeAccessToken.belongsTo(SequelizeUser, {
+    /**
+     * Generates associations for SequelizeAccesToken
+     */
+    public static associate(models: {
+        User?: typeof SequelizeUser;
+        AccessToken?: typeof SequelizeAccessToken;
+    }): void {
+        models.AccessToken!.belongsTo(models.User!, {
             as: 'user',
             foreignKey: 'userId',
             targetKey: 'id',
         });
     }
 
+    /*
+     * Issues an access token inheriting from core class and adding the user
+     * instance to the returned value to stay compatible with core API
+     */
     public static async issue(user: User): Promise<AccessToken> {
         const accessToken = await super.issue(user);
         return (await this.first({token: accessToken.token}))!;

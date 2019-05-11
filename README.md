@@ -17,41 +17,63 @@ It provides a function that should be called with an instance of sequelize:
 import {SequelizeAccessToken, SequelizeUser} from 'safe-auth-sequelize';
 ```
 
-You need to initialize these models before using them.
+Models should get initialized (like any other sequelize model) before being
+used. Initialization can be done explicitly:
 
 ```typescript
 SequelizeUser.init({}, {sequelize});
 SequelizeAccessToken.init({}, {sequelize});
-SequelizeUser.associate();
-SequelizeAccessToken.associate();
+const models = {User: SequelizeUser, AccessToken: SequelizeAccessToken}
+SequelizeUser.associate(models);
+SequelizeAccessToken.associate(models);
 ```
 
-Note that this is the same for all other sequelize models, safe-auth-sequelize
-can't do it by itself because the initialization process needs an instance of
-Sequelize.
-
-If you are using the general sequelize importing script for your project and it
-runs after initalizing these models, you don't need to call `associate` as that
-script does it for you.
+or if there's a script that automates this process for all sequelize models, it
+should work for these two models too and manual initialization won't be
+required.
 
 ## Extending models
 
-Alternatively you can extend one or both of the models by inheriting them. In
-this case you should not initialize the imported model that you are inheriting
-from and instead you should initialize the inherited model, for example here we
-inherit from `User` model and use the original `AccessToken` model, the
-inherited `User` model is connected to a `Organization` model that's not in the
-code snippet below:
+Most of the time it's needed to extend the `SequelizeUser` model (or even the
+`SequelizeAccessToken` model), to do so new classes should be defined extending
+the code classes of safe-auth-sequelize. Also the core class shouldn't get
+initialized and the initialization should happen for the inherited class
+instead.
+
+For example here a `User` class is inheriting from the core `SequelizeUser`
+class. It's connected to a `Organization` model.
 
 ```typescript
 import {SequelizeAccessToken, SequelizeUser} from 'safe-auth-sequelize';
+
+class Organization extends Sequelize.Model {
+    public id!: number;
+    public name!: string;
+}
+Organization.init({
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false,
+    },
+    name: {
+        type: new DataTypes.STRING(128),
+        allowNull: false,
+    },
+}, {sequelize})
+// Organization doesn't have an associate method
 
 class User extends SequelizeUser {
     public firstname!: string;
     public lastname!: string;
     public organization!: Organization // A class in your codebase
 
-    public static associate(): void {
+    public static associate(models: {
+        User?: typeof SequelizeUser;
+        AccessToken?: typeof SequelizeAccessToken;
+    }): void {
+        super.associate();
         SequelizeAccessToken.belongsTo(Organization, {
             as: 'organization',
             foreignKey: 'organizationId',
@@ -71,12 +93,14 @@ User.init({
     },
 }, {sequelize})
 SequelizeAccessToken.init({}, {sequelize});
-User.associate();
-SequelizeAccessToken.associate();
+const models = {User: SequelizeUser, AccessToken: SequelizeAccessToken}
+User.associate(models);
+SequelizeAccessToken.associate(models);
 ```
 
 Note that you don't need to define internal fields of safe-auth-sequelize,
-you just need to define your own custom fields in the `init` function call.
+you just need to define your own custom fields in the `init` function call
+(here `firstname` and `lastname`).
 
 ### Migrations
 
