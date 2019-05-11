@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/evenset/safe-auth-sequelize.svg?branch=development)](https://travis-ci.com/evenset/safe-auth-sequelize)
+[![Build Status](https://travis-ci.org/evenset/safe-auth-sequelize.svg?branch=development)](https://travis-ci.org/evenset/safe-auth-sequelize)
 [![codecov](https://codecov.io/gh/evenset/safe-auth-sequelize/branch/development/graph/badge.svg)](https://codecov.io/gh/evenset/safe-auth-sequelize)
 [![npm version](https://badge.fury.io/js/safe-auth-sequelize.svg)](https://badge.fury.io/js/safe-auth-sequelize)
 
@@ -26,17 +26,15 @@ SequelizeUser.associate();
 SequelizeAccessToken.associate();
 ```
 
-Note that this is the same for all other sequelize models, safe-auth-sequelize
+_Note that this is the same for all other sequelize models, safe-auth-sequelize
 can't do it by itself because the initialization process needs an instance of
 Sequelize.
 
-If you are using the general sequelize importing script and it runs after
-initalizing these models, you don't need to call `associate` as that script
-does it for you.
+If you are using the general sequelize importing script for your project and it
+runs after initalizing these models, you don't need to call `associate` as that
+script does it for you._
 
-Each of these two models implement the corresponding safe-auth model and
-Sequelize model at the same time, so they store stuff in the database the
-`sequelize` instance is connected to.
+## Extending models
 
 Alternatively you can extend one or both of the models by inheriting them. In
 this case you should not initialize the imported model that you are inheriting
