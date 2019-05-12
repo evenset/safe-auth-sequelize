@@ -9,6 +9,10 @@ MySQL, MariaDB, SQLite and Microsoft SQL Server database engines for safe-auth
 as its storage backend.
 It's written in TypeScript with %100 test code coverage.
 
+# Requirements
+
+safe-auth-sequelize needs and is tested against Sequelize 5.1 or higher
+
 # How to use
 
 It provides a function that should be called with an instance of sequelize:
