@@ -1,6 +1,6 @@
 {
     "name": "safe-auth-sequelize",
-    "version": "0.1.0",
+    "version": "0.1.3",
     "description": "Sequelize storage backend for safe-auth.",
     "main": "lib/index.js",
     "dependencies": {
@@ -47,7 +47,7 @@
         "tsc:watch": "tsc --watch",
         "test:runner": "export NODE_ENV=test; ",
         "test": "npm run test:runner -- jest --verbose --testRegex .*\\.test\\.ts$ --coverage",
-        "test:watch": "npm run test:runner -- jest --verbose --testRegex .*\\.test\\.ts$ --watch",
+        "test:watch": "npm run test:runner -- jest --verbose --testRegex .*\\.test\\.ts$ --coverage --watch",
         "lint": "eslint --ext ts ./src",
         "audit-ci": "audit-ci",
         "typedoc": "typedoc"

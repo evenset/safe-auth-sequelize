@@ -187,10 +187,7 @@ export class SequelizeUser extends
     /**
      * Generates associations for SequelizeAccesToken
      */
-    public static associate(models: {
-        User?: typeof SequelizeUser;
-        AccessToken?: typeof SequelizeAccessToken;
-    }): void {
+    public static associate(models: AssociationParameters): void {
     }
 }
 Object.defineProperty(SequelizeUser, 'name', {value: 'User'});
@@ -253,10 +250,7 @@ export class SequelizeAccessToken extends
     /**
      * Generates associations for SequelizeAccesToken
      */
-    public static associate(models: {
-        User?: typeof SequelizeUser;
-        AccessToken?: typeof SequelizeAccessToken;
-    }): void {
+    public static associate(models: AssociationParameters): void {
         models.AccessToken!.belongsTo(models.User!, {
             as: 'user',
             foreignKey: 'userId',
@@ -274,3 +268,8 @@ export class SequelizeAccessToken extends
     }
 }
 Object.defineProperty(SequelizeAccessToken, 'name', {value: 'AccessToken'});
+
+export interface AssociationParameters {
+    User?: typeof SequelizeUser;
+    AccessToken?: typeof SequelizeAccessToken;
+}
