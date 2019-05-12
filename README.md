@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/evenset/safe-auth-sequelize.svg?branch=development)](https://travis-ci.org/evenset/safe-auth-sequelize)
+[![Build Status](https://travis-ci.com/evenset/safe-auth-sequelize.svg?branch=development)](https://travis-ci.com/evenset/safe-auth-sequelize)
 [![codecov](https://codecov.io/gh/evenset/safe-auth-sequelize/branch/development/graph/badge.svg)](https://codecov.io/gh/evenset/safe-auth-sequelize)
 [![npm version](https://badge.fury.io/js/safe-auth-sequelize.svg)](https://badge.fury.io/js/safe-auth-sequelize)
 
@@ -27,9 +27,8 @@ used. Initialization can be done explicitly:
 ```typescript
 SequelizeUser.init({}, {sequelize});
 SequelizeAccessToken.init({}, {sequelize});
-const models = {User: SequelizeUser, AccessToken: SequelizeAccessToken}
-SequelizeUser.associate(models);
-SequelizeAccessToken.associate(models);
+SequelizeUser.associate(sequelize.models);
+SequelizeAccessToken.associate(sequelize.models);
 ```
 
 or if there's a script that automates this process for all sequelize models, it
@@ -97,9 +96,8 @@ User.init({
     },
 }, {sequelize})
 SequelizeAccessToken.init({}, {sequelize});
-const models = {User: SequelizeUser, AccessToken: SequelizeAccessToken}
-User.associate(models);
-SequelizeAccessToken.associate(models);
+User.associate(sequelize.models);
+SequelizeAccessToken.associate(sequelize.models);
 ```
 
 Note that you don't need to define internal fields of safe-auth-sequelize,
