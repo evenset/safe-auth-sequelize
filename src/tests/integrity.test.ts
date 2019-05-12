@@ -58,13 +58,7 @@ describe('Use models as is', (): void => {
         const {sequelize} = models;
         SequelizeUser.init({}, {sequelize});
         SequelizeAccessToken.init({}, {sequelize});
-        if (process.env.SEQUELIZE_VERSION === '5.1')
-            SequelizeAccessToken.associate({
-                User: SequelizeUser,
-                AccessToken: SequelizeAccessToken,
-            });
-        else
-            SequelizeAccessToken.associate(sequelize.models);
+        SequelizeAccessToken.associate(sequelize.models as any);
         const user = new SequelizeUser({username, isActive: true});
         await user.setPassword(password);
         expect(await SequelizeUser.authenticate(username, password))
@@ -183,10 +177,7 @@ describe('Inheriting and extending user model', (): void => {
                 allowNull: true,
             },
         }, {sequelize});
-        if (process.env.SEQUELIZE_VERSION === '5.1')
-            SequelizeAccessToken.associate({User, AccessToken});
-        else
-            SequelizeAccessToken.associate(sequelize.models);
+        SequelizeAccessToken.associate(sequelize.models as any);
         await queryInterface.addColumn('AccessTokens', 'randomField', {
             type: SS.INTEGER,
             allowNull: true,
