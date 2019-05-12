@@ -58,7 +58,7 @@ describe('Use models as is', (): void => {
         const {sequelize} = models;
         SequelizeUser.init({}, {sequelize});
         SequelizeAccessToken.init({}, {sequelize});
-        if ((sequelize.Sequelize as any).version.startsWith('5.1'))
+        if (process.env.SEQUELIZE_VERSION === '5.1')
             SequelizeAccessToken.associate({
                 User: SequelizeUser,
                 AccessToken: SequelizeAccessToken,
@@ -183,7 +183,7 @@ describe('Inheriting and extending user model', (): void => {
                 allowNull: true,
             },
         }, {sequelize});
-        if ((sequelize.Sequelize as any).version.startsWith('5.1'))
+        if (process.env.SEQUELIZE_VERSION === '5.1')
             SequelizeAccessToken.associate({User, AccessToken});
         else
             SequelizeAccessToken.associate(sequelize.models);
